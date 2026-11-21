@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Solo System Leveling</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;800&family=Rajdhani:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--void:#05060f;--deep:#0a1030;--panel:#0c1538cc;--edge:#2b6dff;--glow:#4fc3ff;--violet:#8a5cff;--text:#dbe8ff;--mute:#7f93c4;--warn:#ff4d6d;--gold:#ffc857;
+--disp:'Orbitron','Segoe UI',Arial,sans-serif;--body:'Rajdhani','Segoe UI',Arial,sans-serif;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-behavior:smooth;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:radial-gradient(ellipse at 50% -10%,#16246b 0%,var(--deep) 35%,var(--void) 80%) fixed;color:var(--text);font:500 1.1rem/1.45 var(--body);min-height:100vh}
+h1,h2,h3{font-family:var(--disp);margin:0;letter-spacing:.04em}
+.wrap{max-width:900px;margin:0 auto;padding:0 18px}
+.hero{text-align:center;padding:44px 0 36px}
+.alert{display:inline-block;border:1px solid var(--edge);padding:6px 16px;color:var(--glow);font-family:var(--disp);font-size:.72rem;letter-spacing:.2em;box-shadow:0 0 18px #2b6dff66,inset 0 0 12px #2b6dff33;animation:pulse 2.4s ease-in-out infinite}
+@keyframes pulse{50%{box-shadow:0 0 30px #4fc3ffaa,inset 0 0 18px #2b6dff55}}
+h1{font-size:clamp(2.2rem,9vw,4.8rem);line-height:1.02;margin:24px 0 14px;font-weight:800;text-transform:uppercase;background:linear-gradient(180deg,#fff,var(--glow) 60%,var(--violet));-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 22px #4fc3ff88)}
+.hero p{max-width:540px;margin:0 auto 26px;color:var(--mute);font-size:1.25rem}
+.btn{display:inline-block;font-family:var(--disp);font-size:.78rem;letter-spacing:.14em;padding:12px 24px;border:1px solid var(--glow);background:#4fc3ff1a;color:var(--glow);text-decoration:none;cursor:pointer;transition:background .2s,box-shadow .2s}
+.btn:hover,.btn:focus-visible{background:#4fc3ff40;box-shadow:0 0 22px #4fc3ff99;outline:none}
+.btn:disabled{opacity:.35;cursor:not-allowed;box-shadow:none}
+.win{background:var(--panel);border:1px solid var(--edge);box-shadow:0 0 26px #2b6dff44,inset 0 0 28px #2b6dff1a;padding:20px;position:relative;margin-bottom:18px}
+.win::before{content:"";position:absolute;inset:5px;border:1px solid #2b6dff55;pointer-events:none}
+.wtitle{font-family:var(--disp);text-align:center;font-size:.85rem;letter-spacing:.2em;border:1px solid var(--edge);padding:5px;margin:-2px 0 14px}
+.grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:0 0 30px}
+.chips span{border:1px solid var(--edge);padding:6px 14px;font-size:.95rem;color:var(--mute)}
+#hud{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:#070a1ee8;backdrop-filter:blur(8px);border:1px solid var(--edge);padding:10px 14px;margin-bottom:12px}
+#hud .r{display:flex;justify-content:space-between;gap:10px;font-family:var(--disp);font-size:.8rem;flex-wrap:wrap}
+.bar{height:10px;background:#0a1030;border:1px solid var(--edge);margin:6px 0 2px;overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--edge),var(--glow));box-shadow:0 0 12px var(--glow);transition:width .5s}
+.tabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:10px;margin-bottom:6px}
+.tabs button,.seg button{flex:none;font:600 .95rem var(--body);background:none;border:1px solid #2b6dff66;color:var(--mute);padding:8px 16px;cursor:pointer}
+.tabs button.on,.seg button.on{border-color:var(--glow);color:#fff;background:#4fc3ff26;box-shadow:0 0 14px #4fc3ff66}
+.seg{display:flex;gap:8px;margin-bottom:14px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:5px 0}
+.small{font-size:.92rem;color:var(--mute)}
+.task{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid #2b6dff33;cursor:pointer}
+.task input{position:absolute;opacity:0}
+.box{width:22px;height:22px;border:1px solid var(--glow);flex:none;display:grid;place-items:center}
+.task input:checked+.box{background:var(--glow);box-shadow:0 0 12px var(--glow)}
+.task input:checked+.box::after{content:"✓";color:var(--void);font-weight:800}
+.task input:focus-visible+.box{outline:2px solid var(--violet);outline-offset:2px}
+.task input:checked~.lbl{color:var(--mute);text-decoration:line-through}
+.lbl{flex:1;overflow-wrap:anywhere}
+.xp{color:var(--violet);font-family:var(--disp);font-size:.75rem;white-space:nowrap}
+.gold{color:var(--gold)}
+.warn{color:var(--warn);font-size:.95rem;margin-top:12px}
+.stat b{font-family:var(--disp);min-width:2.5ch;display:inline-block;text-align:right;margin-right:8px}
+.plus{background:none;border:1px solid var(--glow);color:var(--glow);width:30px;height:30px;font:inherit;cursor:pointer}
+.plus:disabled{opacity:.25;cursor:not-allowed}
+.ranks{display:flex;gap:8px;margin-bottom:18px}
+.rk{flex:1;text-align:center;border:1px solid #2b6dff55;padding:8px 0;font-family:var(--disp);opacity:.4}
+.rk.on{opacity:1;border-color:var(--glow);box-shadow:0 0 16px #4fc3ff88;color:#fff}
+.rk.cur{background:#4fc3ff33}
+.boss.lock{opacity:.45}
+.boss h3{font-size:1rem}
+.tag{font-family:var(--disp);font-size:.7rem;color:var(--violet);letter-spacing:.15em}
+.ok{color:#5cf2a0}.no{color:var(--warn)}
+.timer{font-family:var(--disp);font-size:clamp(3rem,16vw,5rem);text-align:center;color:#fff;text-shadow:0 0 22px var(--glow);margin:8px 0 16px}
+.c{text-align:center}
+input[type=text],select{font:inherit;background:#0a1030;border:1px solid var(--edge);color:var(--text);padding:9px 12px;min-width:0}
+input[type=text]{flex:1}
+.pri{font-family:var(--disp);font-size:.65rem;padding:2px 6px;border:1px solid}
+.x{background:none;border:0;color:var(--mute);font-size:1.2rem;cursor:pointer}
+.chart{display:flex;align-items:flex-end;gap:8px;height:120px;margin-top:10px}
+.chart div{flex:1;text-align:center;font-size:.8rem;color:var(--mute);display:flex;flex-direction:column;justify-content:flex-end;height:100%}
+.chart i{display:block;background:linear-gradient(0deg,var(--edge),var(--glow));box-shadow:0 0 10px #4fc3ff88;min-height:3px}
+footer{text-align:center;padding:30px 0 60px;color:var(--mute);font-size:.92rem}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,40px);opacity:0;background:var(--void);border:1px solid var(--glow);padding:12px 22px;font-family:var(--disp);font-size:.75rem;letter-spacing:.1em;box-shadow:0 0 30px #4fc3ffaa;transition:.35s;z-index:20;text-align:center;max-width:92vw;pointer-events:none}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <div class="alert">[ NOTIFICATION ] YOU HAVE BEEN CHOSEN</div>
+  <h1>Solo System<br>Leveling</h1>
+  <p>Train, study and clear quests in real life. Defeat bosses, rank up from E to S, and level the only person who matters.</p>
+  <a class="btn" href="#app">Enter the System</a>
+</header>
+<div class="chips"><span>Daily quests</span><span>Boss arena</span><span>Focus timer</span><span>To‑do list</span><span>Store and gear</span><span>Stats</span></div>
+
+<main id="app">
+  <div id="hud"></div>
+  <div class="tabs" id="tabs"></div>
+  <div id="view"></div>
+</main>
+<footer>The weak have no choice. The strong choose.<br>Progress is saved privately in this browser. Check with a doctor before starting a new exercise program.</footer>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+var K="sslv2",R=["E","D","C","B","A","S"],ST=["STR","AGI","VIT","END","SENSE"],TABS=[["q","Quests"],["b","Bosses"],["f","Focus"],["t","To‑do"],["s","Store"],["a","Stats"]];
+var BOSSES=[
+{n:"Gate Goblin",lv:5,si:0,sr:14,t:"50 push‑ups in a single set"},
+{n:"Dire Wolf",lv:10,si:1,sr:20,t:"Run 5 km in under 35 minutes"},
+{n:"Iron Golem",lv:20,si:3,sr:28,t:"100 bodyweight squats without stopping"},
+{n:"Shadow Knight",lv:35,si:2,sr:38,t:"3 minute plank, then 30 push‑ups"},
+{n:"Frost Giant",lv:50,si:0,sr:48,t:"10 km run plus 100 push‑ups the same day"}];
+var GEAR=[["xp","Weighted Vest","+10% XP per level",150,3],["gold","Lucky Coin","+15% gold per level",120,3],["cap","Rune Belt","+10 stat cap per level",200,3],["shield","Streak Shield","Blocks one missed day",180,3]];
+var D={lvl:1,xp:0,pts:0,gold:0,rk:0,st:[10,10,10,10,10],role:"general",done:[0,0,0,0],day:"",streak:0,last:"",boss:[],todos:[],focus:0,tdone:0,qtot:0,hist:{},gear:{xp:0,gold:0,cap:0,shield:0}};
+var S=JSON.parse(JSON.stringify(D)),tab="q",T={len:25,rem:25*60,end:0,run:false},msg="";
+try{var raw=localStorage.getItem(K);if(raw){var p=JSON.parse(raw);if(p&&p.st)S=Object.assign(S,p);}}catch(e){}
+function $(i){return document.getElementById(i)}
+function save(){try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function toast(t){var el=$("toast");el.textContent=t;el.classList.add("show");clearTimeout(toast.h);toast.h=setTimeout(function(){el.classList.remove("show")},2400)}
+function need(){return 60+S.lvl*20}
+function cap(){return 50+10*S.gear.cap}
+function xpAdd(n){S.xp+=Math.round(n*(1+.1*S.gear.xp));while(S.xp>=need()){S.xp-=need();S.lvl++;S.pts+=3;toast("LEVEL UP. You are level "+S.lvl)}}
+function goldAdd(n){S.gold+=Math.round(n*(1+.15*S.gear.gold))}
+function dk(i){return new Date(Date.now()-i*864e5).toDateString()}
+// new day handling
+var t0=dk(0);
+if(S.day!==t0){
+  if(S.day&&S.streak>0&&S.last!==dk(1)&&S.last!==t0){
+    if(S.gear.shield>0){S.gear.shield--;S.last=dk(1);msg="Streak Shield absorbed the penalty."}
+    else{S.streak=0;msg="Penalty zone: your streak was reset."}
+  }
+  S.day=t0;S.done=[0,0,0,0];save();
+}
+function quests(){
+  var L=S.lvl,a=Math.min(200,20+L*4);
+  return [["Push‑ups",a+" reps"],["Sit‑ups",a+" reps"],["Squats",Math.min(250,25+L*5)+" reps"],
+    S.role==="student"?["Study session",Math.min(180,30+L*3)+" min"]:["Run",Math.min(10,1+L*.15).toFixed(1)+" km"]];
+}
+function hud(){
+  $("hud").innerHTML='<div class="r"><span>LV '+S.lvl+' · '+R[S.rk]+'‑RANK</span><span class="gold">'+S.gold+' G</span><span>🔥 '+S.streak+'</span></div><div class="bar"><i style="width:'+Math.min(100,S.xp/need()*100)+'%"></i></div><div class="small">'+S.xp+' / '+need()+' XP</div>';
+}
+function tabs(){$("tabs").innerHTML=TABS.map(function(x){return '<button data-a="tab" data-v="'+x[0]+'" class="'+(tab===x[0]?'on':'')+'">'+x[1]+'</button>'}).join("")}
+function vQ(){
+  var q=quests(),h='<div class="seg"><button data-a="role" data-v="general" class="'+(S.role==="general"?"on":"")+'">General</button><button data-a="role" data-v="student" class="'+(S.role==="student"?"on":"")+'">Student</button></div>';
+  h+='<div class="win"><div class="wtitle">DAILY QUEST</div>'+q.map(function(x,i){return '<label class="task"><input type="checkbox" data-a="q" data-i="'+i+'"'+(S.done[i]?" checked disabled":"")+'><span class="box"></span><span class="lbl">'+x[0]+': '+x[1]+'</span><span class="xp">+25 XP</span></label>'}).join("");
+  h+='<div class="small" style="margin-top:12px">Targets grow with your level. Student swaps the run for a study session. Finish all four to extend your streak and earn a 50 gold bonus.</div><div class="warn">Skip a day and the penalty zone resets your streak.</div></div>';
+  h+='<div class="win"><div class="wtitle">ABILITIES</div>'+ST.map(function(n,i){return '<div class="row stat"><span>'+n+'</span><span><b>'+S.st[i]+'</b><button class="plus" data-a="pt" data-i="'+i+'" aria-label="Add point to '+n+'"'+(S.pts&&S.st[i]<cap()?"":" disabled")+'>+</button></span></div>'}).join("")+'<div class="small">Stat points: <b style="color:var(--glow)">'+S.pts+'</b> (3 per level). Cap: '+cap()+'.</div></div>';
+  return h;
+}
+function vB(){
+  var h='<div class="ranks">'+R.map(function(r,i){return '<div class="rk'+(i<=S.rk?" on":"")+(i===S.rk?" cur":"")+'">'+r+'</div>'}).join("")+'</div>';
+  h+='<div class="small" style="margin-bottom:14px">Levels alone never skip a rank. Meet the requirements, then land the finishing blow in real life.</div><div class="grid">';
+  BOSSES.forEach(function(b,i){
+    var beat=S.boss.indexOf(i)>-1,avail=S.rk===i,l=S.lvl>=b.lv,s=S.st[b.si]>=b.sr;
+    h+='<div class="win boss'+(avail||beat?"":" lock")+'"><div class="tag">'+R[i]+' → '+R[i+1]+'</div><h3>'+b.n+'</h3>'
+     +'<div class="small" style="margin:8px 0">Finishing blow: '+b.t+'</div>'
+     +'<div class="'+(l?"ok":"no")+'">'+(l?"✓":"✗")+' Level '+b.lv+'</div><div class="'+(s?"ok":"no")+'">'+(s?"✓":"✗")+' '+ST[b.si]+' '+b.sr+'</div><div style="margin-top:12px">'
+     +(beat?'<span class="ok">DEFEATED</span>':'<button class="btn" data-a="boss" data-i="'+i+'"'+(avail&&l&&s?"":" disabled")+'>I did it</button>')+'</div></div>';
+  });
+  return h+'</div>';
+}
+function fmt(s){var m=Math.floor(s/60),x=s%60;return (m<10?"0":"")+m+":"+(x<10?"0":"")+x}
+function vF(){
+  return '<div class="win c"><div class="wtitle">FOCUS TIMER</div><div class="seg" style="justify-content:center">'+[15,25,45].map(function(m){return '<button data-a="len" data-v="'+m+'" class="'+(T.len===m?"on":"")+'">'+m+' min</button>'}).join("")+'</div><div class="timer" id="tm">'+fmt(T.rem)+'</div>'
+   +'<button class="btn" data-a="go">'+(T.run?"Pause":"Start")+'</button> <button class="btn" data-a="rst">Reset</button><div class="small" style="margin-top:14px">Finish a session to earn XP equal to its minutes, gold, and +1 Sense. Total focus: '+S.focus+' min.</div></div>';
+}
+var PR={L:["Low",5,"#7f93c4"],M:["Medium",10,"#ffc857"],H:["High",20,"#ff4d6d"]};
+function vT(){
+  var h='<div class="win"><div class="wtitle">TASKS</div><div class="row"><input type="text" id="tin" maxlength="80" placeholder="Add a real task" aria-label="New task"><select id="tpr" aria-label="Priority"><option value="L">Low</option><option value="M" selected>Medium</option><option value="H">High</option></select><button class="btn" data-a="add">Add</button></div>';
+  h+=S.todos.length?S.todos.map(function(x,i){var p=PR[x.p];return '<div class="task" style="cursor:default"><input type="checkbox" id="td'+i+'" data-a="td" data-i="'+i+'"><label for="td'+i+'" class="box" style="cursor:pointer"></label><span class="lbl">'+esc(x.t)+'</span><span class="pri" style="color:'+p[2]+'">'+p[0]+'</span><span class="xp">+'+p[1]+'</span><button class="x" data-a="del" data-i="'+i+'" aria-label="Delete task">×</button></div>'}).join(""):'<div class="small" style="padding:14px 0">No tasks yet. Add one and earn XP for finishing it.</div>';
+  return h+'</div>';
+}
+function vS(){
+  return '<div class="small" style="margin-bottom:12px">You have <b class="gold">'+S.gold+' gold</b>. Earn it from quests, focus sessions and bosses.</div><div class="grid">'+GEAR.map(function(g){
+    var n=S.gear[g[0]],c=g[3]*(n+1),mx=n>=g[4];
+    return '<div class="win"><h3 style="font-size:1rem">'+g[1]+'</h3><div class="small">'+g[2]+'</div><div style="margin:8px 0">Owned: '+n+' / '+g[4]+'</div><button class="btn" data-a="buy" data-k="'+g[0]+'"'+(mx||S.gold<c?" disabled":"")+'>'+(mx?"Maxed":"Buy "+c+" G")+'</button></div>'}).join("")+'</div>';
+}
+function vA(){
+  var days=[6,5,4,3,2,1,0].map(function(i){var d=dk(i);return [d.slice(0,3),S.hist[d]||0]});
+  var mx=Math.max(4,Math.max.apply(null,days.map(function(d){return d[1]})));
+  return '<div class="win"><div class="wtitle">LAST 7 DAYS</div><div class="small">Quests completed per day</div><div class="chart">'+days.map(function(d){return '<div><span>'+d[1]+'</span><i style="height:'+Math.round(d[1]/mx*85)+'%"></i><span>'+d[0]+'</span></div>'}).join("")+'</div></div>'
+   +'<div class="grid"><div class="win"><div class="row"><span>Quests cleared</span><b>'+S.qtot+'</b></div><div class="row"><span>Focus minutes</span><b>'+S.focus+'</b></div><div class="row"><span>Tasks finished</span><b>'+S.tdone+'</b></div><div class="row"><span>Bosses defeated</span><b>'+S.boss.length+'</b></div></div>'
+   +'<div class="win">'+ST.map(function(n,i){return '<div class="row"><span>'+n+'</span><div class="bar" style="flex:1;max-width:60%"><i style="width:'+Math.min(100,S.st[i]/cap()*100)+'%"></i></div><b>'+S.st[i]+'</b></div>'}).join("")+'</div></div>'
+   +'<button class="btn" data-a="wipe">Reset all progress</button>';
+}
+var V={q:vQ,b:vB,f:vF,t:vT,s:vS,a:vA};
+function render(){hud();tabs();$("view").innerHTML=V[tab]()}
+$("tabs").addEventListener("click",function(e){var b=e.target.closest("[data-a=tab]");if(b){tab=b.getAttribute("data-v");render()}});
+function act(e){
+  var el=e.target.closest("[data-a]");if(!el)return;var a=el.getAttribute("data-a"),i=+el.getAttribute("data-i"),v=el.getAttribute("data-v");
+  if(e.type==="change"&&el.type!=="checkbox")return;
+  if(e.type==="click"&&el.type==="checkbox")return;
+  if(a==="q"){S.done[i]=1;xpAdd(25);goldAdd(10);S.qtot++;S.hist[t0]=(S.hist[t0]||0)+1;
+    if(S.done.every(Boolean)){goldAdd(50);if(S.last!==t0){S.streak=(S.last===dk(1)?S.streak:0)+1;S.last=t0}toast("QUEST COMPLETE. Streak "+S.streak)}}
+  else if(a==="role"){if(S.done.some(Boolean)){toast("Change role after the next daily reset.");return}S.role=v}
+  else if(a==="pt"){if(S.pts&&S.st[i]<cap()){S.st[i]++;S.pts--}}
+  else if(a==="boss"){var b=BOSSES[i];if(S.rk===i&&S.lvl>=b.lv&&S.st[b.si]>=b.sr){S.boss.push(i);S.rk=i+1;goldAdd(100*(i+1));toast("RANK UP. You are now "+R[S.rk]+"‑Rank")}}
+  else if(a==="len"){if(!T.run){T.len=+v;T.rem=T.len*60}}
+  else if(a==="go"){if(T.run){T.rem=Math.max(1,Math.round((T.end-Date.now())/1000));T.run=false}else{T.end=Date.now()+T.rem*1000;T.run=true}}
+  else if(a==="rst"){T.run=false;T.rem=T.len*60}
+  else if(a==="add"){var x=$("tin").value.trim();if(!x)return;S.todos.push({t:x,p:$("tpr").value})}
+  else if(a==="td"){S.tdone++;xpAdd(PR[S.todos[i].p][1]);goldAdd(PR[S.todos[i].p][1]/2);S.todos.splice(i,1)}
+  else if(a==="del"){S.todos.splice(i,1)}
+  else if(a==="buy"){var g=GEAR.filter(function(z){return z[0]===el.getAttribute("data-k")})[0],c=g[3]*(S.gear[g[0]]+1);if(S.gold>=c&&S.gear[g[0]]<g[4]){S.gold-=c;S.gear[g[0]]++;toast(g[1]+" acquired")}}
+  else if(a==="wipe"){if(el.getAttribute("data-s")!=="1"){el.setAttribute("data-s","1");el.textContent="Tap again to confirm";return}S=JSON.parse(JSON.stringify(D));S.day=t0;T.run=false}
+  else return;
+  save();render();
+}
+$("view").addEventListener("click",act);$("view").addEventListener("change",act);
+$("view").addEventListener("keydown",function(e){if(e.key==="Enter"&&e.target.id==="tin"){act({type:"click",target:document.querySelector("[data-a=add]")})}});
+setInterval(function(){
+  if(!T.run)return;
+  var r=Math.max(0,Math.round((T.end-Date.now())/1000));T.rem=r;
+  var el=$("tm");if(el)el.textContent=fmt(r);
+  if(r<=0){T.run=false;T.rem=T.len*60;xpAdd(T.len);goldAdd(Math.round(T.len/5));S.focus+=T.len;if(S.st[4]<cap())S.st[4]++;toast("FOCUS COMPLETE. +"+T.len+" XP");save();render()}
+},500);
+render();if(msg)toast(msg);
+})();
+</script>
+</body>
+</html>
